@@ -23,7 +23,7 @@ public class Simbolos {
     private int columna;
 
     public Simbolos() {
-        RellenarArreglos();
+        this.agrupacionTokens();
     }
     /**
     *
@@ -99,37 +99,48 @@ public class Simbolos {
         this.columna = columna;
     }
     
+    private void agrupacionTokens() {
+        tiposSignosAgrupacion();
+        tiposOperadoresMatematicos();
+        tiposSignosPuntuacion();
+        tiposCaractereesEspeciales();
+    }
+     
      /**
     *
-    * rellenar arreglos
+    * Metodos de Tokens
     */
-    public void RellenarArreglos() {
-        //rellenando caracteres especiales
-        CaracterEspecial = new ArrayList<>();
-        CaracterEspecial.add('t');
-        CaracterEspecial.add('f');
-        CaracterEspecial.add('n');
-        CaracterEspecial.add('r');    
-        //Rellenando Signos de agrupacion
+    public void tiposCaractereesEspeciales() {
+        this.CaracterEspecial = new ArrayList<>();
+        this.CaracterEspecial.add('t');
+        this.CaracterEspecial.add('f');
+        this.CaracterEspecial.add('n');
+        this.CaracterEspecial.add('r');    
+    }
+
+    private void tiposSignosAgrupacion() {
         SignosAgrupacion = new ArrayList<>();
-        SignosAgrupacion.add(')');
-        SignosAgrupacion.add('(');  
-        //rellenando Signos de puntuacion:
+        this.SignosAgrupacion.add(')');
+        this.SignosAgrupacion.add('(');       
+    }
+
+    private void tiposSignosPuntuacion() {
         SignosPuntuacion = new ArrayList<>();
-        SignosPuntuacion.add('.');
-        SignosPuntuacion.add(':');
-        SignosPuntuacion.add(';');
-        SignosPuntuacion.add(',');
-        SignosPuntuacion.add('<');
-        SignosPuntuacion.add('<');
-        SignosPuntuacion.add('‘');
-        SignosPuntuacion.add('\'');
-        SignosPuntuacion.add('>');
-        //rellenando operadores matematicos:
+        this.SignosPuntuacion.add('.');
+        this.SignosPuntuacion.add(':');
+        this.SignosPuntuacion.add(';');
+        this.SignosPuntuacion.add(',');
+        this.SignosPuntuacion.add('<');
+        this.SignosPuntuacion.add('<');
+        this.SignosPuntuacion.add('‘');
+        this.SignosPuntuacion.add('\'');
+        this.SignosPuntuacion.add('>');
+    }
+
+    private void tiposOperadoresMatematicos() {
         Operadores = new ArrayList<>();
-        Operadores.add('*');
-        Operadores.add('%');
-        Operadores.add('+');
-        
+        this.Operadores.add('*');
+        this.Operadores.add('%');
+        this.Operadores.add('+');
     }
 }

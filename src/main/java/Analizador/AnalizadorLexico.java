@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 public class AnalizadorLexico {
     VerificadorErroresLexicos errores= new VerificadorErroresLexicos();
+    public static String Ayudador = "";
     private String texto;
     private Simbolos Simbolo= new Simbolos();
     private final String SALTO = "\n";
@@ -147,7 +148,8 @@ public class AnalizadorLexico {
     
      public void analisisLexico() {
         this.lexema.clear();
-        texto = main.MenuInicial.getAreaDeTexto().getText();
+        texto = Ayudador;
+        Ayudador = "";
         this.estadoActual = 0;
         char temporal;
         while (posicion < texto.length()) {

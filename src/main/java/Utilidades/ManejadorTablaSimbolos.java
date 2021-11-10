@@ -7,6 +7,7 @@ package Utilidades;
 
 import Analizador.AnalizadorLexico;
 import Interfaz.SimbolosYTrans;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -36,7 +37,7 @@ public class ManejadorTablaSimbolos {
     }
 
     public void setDatos(JTable tabla){
-        Object[] datos= new Object[modelo.getColumnCount()];
+        Object[] datos= new Object[modelo.getColumnCount()];     
         int i=1;
         modelo.setRowCount(0);
         for(int x=0; x< AnalizadorLexico.tokenRecopilado.size()-1;x++){
@@ -44,6 +45,7 @@ public class ManejadorTablaSimbolos {
             datos[1]= nombreParaListado(AnalizadorLexico.tokenRecopilado.get(x).getTipoToken());
             datos[2]= AnalizadorLexico.tokenRecopilado.get(x).getFila();
             datos[3]= AnalizadorLexico.tokenRecopilado.get(x).getColumna();
+            JOptionPane.showMessageDialog(null, AnalizadorLexico.tokenRecopilado.get(x).getLexema());
             modelo.addRow(datos);
         }
         alinear.setHorizontalAlignment(SwingConstants.CENTER);

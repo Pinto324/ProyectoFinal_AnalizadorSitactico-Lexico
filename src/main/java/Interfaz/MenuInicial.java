@@ -8,11 +8,9 @@ package Interfaz;
 import Analizador.AnalizadorLexico;
 import Analizador.AnalizadorSintactico;
 import Analizador.VerificadorErroresLexicos;
-import static Main.main.MenuInicial;
 import Utilidades.Atajos;
 import Utilidades.ManejadorDeArchivos;
 import Utilidades.ManejadorDeTexto;
-import Utilidades.ManejadorTablaSimbolos;
 import Utilidades.Numerador;
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,13 +30,12 @@ import javax.swing.text.DefaultEditorKit;
  * @author branp
  */
 public class MenuInicial extends javax.swing.JFrame {
-
-    JFileChooser seleccion = new JFileChooser();
-    private File Archivo;
+    private String archivoALeer;
+    public static File Archivo;
     private ConcurrentHashMap<Integer, ManejadorDeTexto> EstadoPrevio;
     private ConcurrentHashMap<Integer, ManejadorDeTexto> EstadoActual;
-    FileInputStream entrada;
-    FileOutputStream salida;
+    public String texto="";
+
     private Action[] actions = { null, null, new DefaultEditorKit.CopyAction(), new DefaultEditorKit.PasteAction() };
     private boolean Llave = true;
     private ManejadorDeArchivos MA;
@@ -49,8 +46,12 @@ public class MenuInicial extends javax.swing.JFrame {
     public MenuInicial() {
         initComponents();
         ControlDeLinea = new Numerador(AreaDeTexto);
-        jScrollPane1.setRowHeaderView(ControlDeLinea);
+        ScrollPanelTexto.setRowHeaderView(ControlDeLinea);
+        EstadoPrevio = new ConcurrentHashMap<>();
+        EstadoActual = new ConcurrentHashMap<>();
+        ScrollPanelTexto.setRowHeaderView(ControlDeLinea);
         Atajos.addUndoFunctionality(AreaDeTexto);
+        BtnAnalizarSintac.setVisible(false);
     }
 
     /**
@@ -67,13 +68,14 @@ public class MenuInicial extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        ScrollPanelTexto = new javax.swing.JScrollPane();
         AreaDeTexto = new javax.swing.JTextArea();
         jPanel4 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         BtnAnalizar = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         AreaDeErrores = new javax.swing.JTextArea();
+        BtnAnalizarSintac = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
         MenuArchivo = new javax.swing.JMenu();
@@ -130,7 +132,7 @@ public class MenuInicial extends javax.swing.JFrame {
 
         AreaDeTexto.setColumns(20);
         AreaDeTexto.setRows(5);
-        jScrollPane1.setViewportView(AreaDeTexto);
+        ScrollPanelTexto.setViewportView(AreaDeTexto);
 
         jPanel4.setBackground(new java.awt.Color(102, 102, 255));
 
@@ -163,7 +165,7 @@ public class MenuInicial extends javax.swing.JFrame {
             .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(30, 30, 30)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 650, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(ScrollPanelTexto, javax.swing.GroupLayout.PREFERRED_SIZE, 650, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(32, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -171,7 +173,7 @@ public class MenuInicial extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(ScrollPanelTexto, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(18, Short.MAX_VALUE))
         );
 
@@ -188,6 +190,14 @@ public class MenuInicial extends javax.swing.JFrame {
         AreaDeErrores.setFocusable(false);
         jScrollPane2.setViewportView(AreaDeErrores);
 
+        BtnAnalizarSintac.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        BtnAnalizarSintac.setLabel("Analisis Sintactico");
+        BtnAnalizarSintac.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnAnalizarSintacActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -197,11 +207,13 @@ public class MenuInicial extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(277, 277, 277)
-                        .addComponent(BtnAnalizar, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(36, 36, 36)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 638, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 638, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(141, 141, 141)
+                        .addComponent(BtnAnalizar, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(97, 97, 97)
+                        .addComponent(BtnAnalizarSintac)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
@@ -210,8 +222,10 @@ public class MenuInicial extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(5, 5, 5)
-                .addComponent(BtnAnalizar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(BtnAnalizar)
+                    .addComponent(BtnAnalizarSintac))
+                .addGap(21, 21, 21)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -355,32 +369,11 @@ public class MenuInicial extends javax.swing.JFrame {
 
     private void MenuAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuAbrirActionPerformed
 
-        if (seleccion.showDialog(null, "Abrir") == JFileChooser.APPROVE_OPTION) {
-            Archivo = seleccion.getSelectedFile();
-            if (Archivo.canRead()) {
-                if (Archivo.getName().endsWith("txt")) {
-                    String documento = abrirArchivo(Archivo);
-                    AreaDeTexto.setText(documento);
-                } else {
-                    JOptionPane.showMessageDialog(null, "El archivo con ese formato no se puede abrir");
-                }
-            }
-        }
+
     }//GEN-LAST:event_MenuAbrirActionPerformed
 
     private void MenuGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuGuardarActionPerformed
-        JFileChooser fileChosser = new JFileChooser();
-        int seleccion = fileChosser.showDialog(null, "Guardar");
-        if (seleccion == JFileChooser.APPROVE_OPTION) {
-            File archivo = fileChosser.getSelectedFile();
-            String texto = AreaDeTexto.getText();
-            boolean guardado = new ManejadorDeArchivos().GuardarArchivo(archivo, texto);
-            if (guardado) {
-                JOptionPane.showMessageDialog(null, "Archivo guardado con exito");
-            } else {
-                JOptionPane.showMessageDialog(null, "No se pudo guardar el archivo");
-            }
-        }
+
     }//GEN-LAST:event_MenuGuardarActionPerformed
 
     private void MenuPegarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuPegarActionPerformed
@@ -401,33 +394,37 @@ public class MenuInicial extends javax.swing.JFrame {
 
     private void BtnAnalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnAnalizarActionPerformed
         if(AreaDeTexto.getText().isEmpty()!=true){
-            AnalizadorLexico AnalizisLexico= new AnalizadorLexico();
+            AreaDeErrores.setText("");
+            AnalizadorLexico.Ayudador = AreaDeTexto.getText();
+            AnalizadorLexico manejador= new AnalizadorLexico();
             if(VerificadorErroresLexicos.existenciaErrores==true){
-                //Mostramos Mensaje de error:
+                //Mostramos ventana de reportes
+                BtnAnalizarSintac.setVisible(false);
                 AreaDeErrores.setText("");
                 AreaDeErrores.setText("Se han encontrado errores Léxicos en el aŕea de texto. Da click en el boton de reporte de errores para más informacion");
-            } else {
-                //Realizamos el analizis sintactico:
-                AnalizadorSintactico manejadorSintactico = new AnalizadorSintactico();
-                    if (manejadorSintactico != null) {
-                        manejadorSintactico.analisisSintactico(AnalizadorLexico.tokenRecopilado);
-                        manejadorSintactico.enlistarErrores(AreaDeErrores);
-                        JOptionPane.showMessageDialog(this, "Enlisto errores", "ERROR", JOptionPane.ERROR_MESSAGE);
-                        if (!manejadorSintactico.existenciaError()) {
-                            MenuSimbolos.setEnabled(true);
-                            JOptionPane.showMessageDialog(this, "No hubo ningún problema en el analisis", "Alerta", JOptionPane.ERROR_MESSAGE);
-                        } else{
-                            JOptionPane.showMessageDialog(this, "Se han encontrado errores Sintacticos", "ERROR", JOptionPane.ERROR_MESSAGE);
-                        }
-                    } else {
-                        System.out.println("error");
-                    }
-                
+            } else {      
+                BtnAnalizarSintac.setVisible(true);
             }
         } else {
             JOptionPane.showMessageDialog(this,"No hay texto dentro del area para poder realizar un analisis Léxico", "ERROR", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_BtnAnalizarActionPerformed
+
+    private void BtnAnalizarSintacActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnAnalizarSintacActionPerformed
+        AnalizadorSintactico manejadorSintactico = new AnalizadorSintactico();
+        if (manejadorSintactico != null) {
+            manejadorSintactico.analisisSintactico(AnalizadorLexico.tokenRecopilado);
+            manejadorSintactico.enlistarErrores(AreaDeErrores);
+            if (!manejadorSintactico.existenciaError()) {
+                JOptionPane.showMessageDialog(this, "Se leyó correctamente", "Alerta", JOptionPane.INFORMATION_MESSAGE);
+                MenuSimbolos.setEnabled(true);
+            } else{
+                JOptionPane.showMessageDialog(this, "Se han encontrado errores Sintacticos", "ERROR", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            System.out.println("error");
+        }
+    }//GEN-LAST:event_BtnAnalizarSintacActionPerformed
 
     //Metodos:
     public String abrirArchivo(File archivo){
@@ -444,6 +441,16 @@ public class MenuInicial extends javax.swing.JFrame {
         return documento;
     }
 
+    public void escritorArchivo(File archivo, String texto){
+        FileOutputStream salida;
+        try {
+            salida = new FileOutputStream(archivo);
+        byte [] bytxt = texto.getBytes();
+            salida.write(bytxt);
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, "Error al Guardar El Archivo");
+        }
+    }
     public void GuardarArchivos(){
         if(Llave==true){
             JFileChooser Guardar = new JFileChooser();
@@ -532,6 +539,7 @@ public class MenuInicial extends javax.swing.JFrame {
     private javax.swing.JTextArea AreaDeErrores;
     private javax.swing.JTextArea AreaDeTexto;
     private javax.swing.JButton BtnAnalizar;
+    private javax.swing.JButton BtnAnalizarSintac;
     private javax.swing.JMenuItem MenuAbrir;
     private javax.swing.JMenu MenuAcercaDe;
     private javax.swing.JMenu MenuArchivo;
@@ -545,6 +553,7 @@ public class MenuInicial extends javax.swing.JFrame {
     private javax.swing.JMenuItem MenuRehacer;
     private javax.swing.JMenuItem MenuSalir;
     private javax.swing.JMenuItem MenuSimbolos;
+    private javax.swing.JScrollPane ScrollPanelTexto;
     private javax.swing.JInternalFrame jInternalFrame1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -554,7 +563,6 @@ public class MenuInicial extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     // End of variables declaration//GEN-END:variables
 }
