@@ -6,6 +6,7 @@
 package Interfaz;
 
 import Analizador.AnalizadorLexico;
+import Analizador.AnalizadorSintactico;
 import Analizador.VerificadorErroresLexicos;
 import static Main.main.MenuInicial;
 import Utilidades.Atajos;
@@ -391,9 +392,7 @@ public class MenuInicial extends javax.swing.JFrame {
     }//GEN-LAST:event_MenuSalirActionPerformed
 
     private void MenuSimbolosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuSimbolosActionPerformed
-        SimbolosYTrans VentanaNueva= new SimbolosYTrans();
-        ManejadorTablaSimbolos manejador = new ManejadorTablaSimbolos();
-        manejador.llenarTabla(VentanaNueva);
+        SimbolosYTrans VentanaNueva= new SimbolosYTrans();  
         VentanaNueva.setVisible(true);
         VentanaNueva.setLocationRelativeTo(null);
         VentanaNueva.setTitle("Menu de Reporte");
@@ -408,8 +407,22 @@ public class MenuInicial extends javax.swing.JFrame {
                 AreaDeErrores.setText("");
                 AreaDeErrores.setText("Se han encontrado errores Léxicos en el aŕea de texto. Da click en el boton de reporte de errores para más informacion");
             } else {
-                //Abrimos la posiblidad de generar reporte:
-                MenuSimbolos.setEnabled(true);
+                //Realizamos el analizis sintactico:
+                AnalizadorSintactico manejadorSintactico = new AnalizadorSintactico();
+                    if (manejadorSintactico != null) {
+                        manejadorSintactico.analisisSintactico(AnalizadorLexico.tokenRecopilado);
+                        manejadorSintactico.enlistarErrores(AreaDeErrores);
+                        JOptionPane.showMessageDialog(this, "Enlisto errores", "ERROR", JOptionPane.ERROR_MESSAGE);
+                        if (!manejadorSintactico.existenciaError()) {
+                            MenuSimbolos.setEnabled(true);
+                            JOptionPane.showMessageDialog(this, "No hubo ningún problema en el analisis", "Alerta", JOptionPane.ERROR_MESSAGE);
+                        } else{
+                            JOptionPane.showMessageDialog(this, "Se han encontrado errores Sintacticos", "ERROR", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } else {
+                        System.out.println("error");
+                    }
+                
             }
         } else {
             JOptionPane.showMessageDialog(this,"No hay texto dentro del area para poder realizar un analisis Léxico", "ERROR", JOptionPane.ERROR_MESSAGE);

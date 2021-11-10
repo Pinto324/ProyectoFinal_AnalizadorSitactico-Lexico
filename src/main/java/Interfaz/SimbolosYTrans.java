@@ -20,6 +20,8 @@ public class SimbolosYTrans extends javax.swing.JFrame {
      */
     public SimbolosYTrans() {
         initComponents();
+        ManejadorTablaSimbolos manejador = new ManejadorTablaSimbolos();
+        manejador.llenarTabla(this);
         this.TablaDeSimbolos.setEnabled(false);
     }
 
