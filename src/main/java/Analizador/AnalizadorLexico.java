@@ -169,7 +169,7 @@ public class AnalizadorLexico {
         this.pabrasReservadas();
         Simbolos tokens = new Simbolos("FINALIZAR", "FINALIZAR", 0, 0);
         tokenRecopilado.add(tokens);
-        main.MenuInicial.getAreaDeTexto().setText(main.MenuInicial.getAreaDeTexto().getText());
+        main.MenuInicial.getAreaDeTexto().setText(texto);
     }
  
     public void construccionReporteTokens(char caracter, int estado, int lenght) {

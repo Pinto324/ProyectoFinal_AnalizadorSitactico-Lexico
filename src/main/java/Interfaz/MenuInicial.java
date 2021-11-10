@@ -427,20 +427,7 @@ public class MenuInicial extends javax.swing.JFrame {
     }//GEN-LAST:event_BtnAnalizarSintacActionPerformed
 
     //Metodos:
-    public String abrirArchivo(File archivo){
-        String documento = "";
-        try{
-            entrada = new FileInputStream(archivo);
-            int ascii;
-            while((ascii = entrada.read())!= -1){
-                char caracter = (char) ascii;
-                documento += caracter;
-            }
-        }catch(Exception e){
-            }
-        return documento;
-    }
-
+   
     public void escritorArchivo(File archivo, String texto){
         FileOutputStream salida;
         try {
@@ -451,50 +438,7 @@ public class MenuInicial extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Error al Guardar El Archivo");
         }
     }
-    public void GuardarArchivos(){
-        if(Llave==true){
-            JFileChooser Guardar = new JFileChooser();
-            if(Guardar.showDialog(null, "Guardar")==JFileChooser.APPROVE_OPTION){
-                Archivo= Guardar.getSelectedFile();
-                MA = new ManejadorDeArchivos(Archivo, this);
-                    try {
-                        String Contenido = AreaDeTexto.getText();
-                        String mensaje = MA.GuardarArchivo(Archivo, Contenido);
-                        if(mensaje!=null){
-                            JOptionPane.showMessageDialog(null, mensaje);
-                            deshacer.setEnabled(false);
-                            rehace.setEnabled(false);
-                            estadoActual.clear();
-                            this.reiniciarBotones();
-                            estadoPrevio.clear();
-                            Llave=false;
-                        } else {
-                            JOptionPane.showMessageDialog(null, "Archivo Incompatible");
-                        }
-                    } catch (IOException ex) {
-                        Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-            }
-        } else {
-            int response = JOptionPane.showConfirmDialog(this,"¿Quieres Guardar los Cambios realizados en el archivo?", "GUARDAR",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE);
-            if (response==JOptionPane.YES_OPTION){
-                try {
-                    guardar.GuardarArchivoExistente(textoAnalizar.getText(), archivo);
-                } catch (IOException ex) {
-                    Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                JOptionPane.showMessageDialog(this, "Cambios guardados exitosamente :)");
-                deshacer.setEnabled(false);
-                rehace.setEnabled(false);
-                estadoActual.clear();
-                estadoPrevio.clear();
-                this.reiniciarBotones();
-                programanoenCero=false;
-                programaGuardado=true;
-            }
 
-        }
-    }
     
     public JTextArea getAreaDeTexto() {
         return AreaDeTexto;
